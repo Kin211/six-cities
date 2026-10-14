@@ -44,6 +44,8 @@
     "convict": "6.2.5",
     "convict-format-with-validator": "6.2.0",
     "dayjs": "1.11.23",
-    "pino": "10.4.0"
+    "inversify": "8.2.3",
+    "pino": "10.4.0",
+    "reflect-metadata": "0.2.2"
   }
 }
