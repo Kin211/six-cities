@@ -45,6 +45,7 @@
     "convict-format-with-validator": "6.2.0",
     "dayjs": "1.11.23",
     "inversify": "8.2.3",
+    "mongoose": "9.11.2",
     "pino": "10.4.0",
     "reflect-metadata": "0.2.2"
   }
