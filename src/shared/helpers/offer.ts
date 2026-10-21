@@ -45,7 +45,7 @@ export function createOffer(offerData: string): Offer {
   const user = {
     email: hostEmail,
     password: '123',
-    name: '',
+    name: hostEmail.split('@')[0],
     userType: 'regular' as const,
     avatarPath: ''
   };
