@@ -2,7 +2,7 @@
 import { RestApplication } from './rest.application.js';
 import { Logger, PinoLogger } from '../shared/libs/logger/index.js';
 import { Config, RestConfig } from '../shared/libs/config/index.js';
-import { RestSchema } from '../shared/libs/config/rest.schema.js';
+import { RestSchema } from '../shared/libs/config/index.js';
 import { DatabaseClient, MongoDatabaseClient } from '../shared/libs/database-client/index.js';
 import { Component } from '../shared/types/index.js';
 
