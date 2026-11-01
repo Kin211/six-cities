@@ -1,12 +1,14 @@
-﻿import { Schema, Document, model } from 'mongoose';
-import { User, USER_TYPES } from '../../types/index.js';
-import { createSHA256 } from '../../helpers/index.js';
+﻿import {Schema, Document, model} from 'mongoose';
+import {User, USER_TYPES} from '../../types/index.js';
+import {createSHA256} from '../../helpers/index.js';
 
 
 export interface UserDocument extends User, Document {
   createdAt: Date;
   updatedAt: Date;
+
   setPassword(password: string, salt: string): void;
+
   verifyPassword(password: string, salt: string): boolean;
 }
 
@@ -38,16 +40,21 @@ const userSchema = new Schema({
     required: true,
     enum: USER_TYPES,
   },
+  favoriteOffers: {//TODO Заменить на другое после разъяснений
+    type: [Schema.Types.ObjectId],
+    ref: 'Offer',
+    default: [],
+  },
 }, {
   timestamps: true,
   collection: 'users',
 });
 
-userSchema.methods.setPassword = function(password: string, salt: string): void {
+userSchema.methods.setPassword = function (password: string, salt: string): void {
   this.password = createSHA256(password, salt);
 };
 
-userSchema.methods.verifyPassword = function(password: string, salt: string): boolean {
+userSchema.methods.verifyPassword = function (password: string, salt: string): boolean {
   const hashPassword = createSHA256(password, salt);
   return hashPassword === this.password;
 };
