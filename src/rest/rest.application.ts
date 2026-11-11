@@ -29,6 +29,10 @@ export class RestApplication {
     return this.databaseClient.connect(mongoUri);
   }
 
+  private async _initMiddleware() {
+    this.server.use(express.json());
+  }
+
   private async _initServer() {
     const port = this.config.get('PORT');
     this.server.listen(port);
@@ -41,8 +45,12 @@ export class RestApplication {
     await this.initDb();
     this.logger.info('Init database completed');
 
+    this.logger.info('Init app-level middleware');
+    await this._initMiddleware();
+    this.logger.info('App-level middleware initialization completed');
+
     this.logger.info('Try to init server…');
     await this._initServer();
-    this.logger.info(`🚀 Server started on http://localhost:${this.config.get('PORT')}`);
+    this.logger.info(`Server started on http://localhost:${this.config.get('PORT')}`);
   }
 }
