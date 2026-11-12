@@ -8,6 +8,10 @@ info:
     url: https://opensource.org/licenses/MIT
   version: 1.0.0
 
+servers:
+  - url: http://localhost:4000
+    description: Локальный сервер
+
 tags:
   - name: users
     description: Действия с пользователями.

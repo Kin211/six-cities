@@ -4,10 +4,13 @@ import { Component } from '../../types/index.js';
 import { OfferServiceInterface } from './offer-service.interface.js';
 import { DefaultOfferService } from './default-offer.service.js';
 import { OfferDocument, OfferModel } from './offer.model.js';
+import {Controller} from '../../libs/rest/index.js';
+import {OfferController} from './offer.controller.js';
 
 export function createOfferContainer(): ContainerModule {
   return new ContainerModule(({bind}) => {
     bind<OfferServiceInterface>(Component.OfferService).to(DefaultOfferService).inSingletonScope();
     bind<Model<OfferDocument>>(Component.OfferModel).toConstantValue(OfferModel);
+    bind<Controller>(Component.OfferController).to(OfferController).inSingletonScope();
   });
 }
