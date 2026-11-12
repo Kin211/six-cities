@@ -47,7 +47,6 @@
     "convict-format-with-validator": "6.2.0",
     "dayjs": "1.11.23",
     "express": "5.3.0",
-    "express-async-handler": "1.2.0",
     "http-status-codes": "2.3.0",
     "inversify": "8.2.3",
     "mongoose": "9.11.2",

@@ -1,12 +1,12 @@
 ﻿import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import {BaseController, HttpMethod, RequestBody, RequestParams} from '../../libs/rest/index.js';
+import {BaseController, HttpError, HttpMethod, RequestBody, RequestParams} from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import {CityName, Component} from '../../types/index.js';
 import { fillDTO } from '../../helpers/index.js';
 import { OfferServiceInterface } from './offer-service.interface.js';
-import { UserServiceInterface } from '../user/user-service.interface.js';
+import { UserServiceInterface } from '../user/index.js';
 import { OfferRdo } from './rdo/offer.rdo.js';
 import { OfferDetailsRdo } from './rdo/offer-details.rdo.js';
 import { CreateOfferRequest } from './create-offer-request.type.js';
@@ -54,8 +54,11 @@ export class OfferController extends BaseController {
     const offer = await this.offerService.findById(offerId);
 
     if (!offer) {
-      this.send(res, StatusCodes.NOT_FOUND, { error: `Предложение с id ${offerId} не найдено.` });
-      return;
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Предложение с id ${offerId} не найдено.`,
+        'OfferController'
+      );
     }
 
     this.ok(res, fillDTO(OfferDetailsRdo, offer));
@@ -68,8 +71,11 @@ export class OfferController extends BaseController {
     const updatedOffer = await this.offerService.updateById(params.offerId, body);
 
     if (!updatedOffer) {
-      this.send(res, StatusCodes.NOT_FOUND, { error: `Предложение с id ${params.offerId} не найдено.` });
-      return;
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Предложение с id ${params.offerId} не найдено.`,
+        'OfferController'
+      );
     }
 
     this.ok(res, fillDTO(OfferDetailsRdo, updatedOffer));
@@ -82,8 +88,11 @@ export class OfferController extends BaseController {
     const deletedOffer = await this.offerService.deleteById(params.offerId);
 
     if (!deletedOffer) {
-      this.send(res, StatusCodes.NOT_FOUND, { error: `Предложение с id ${params.offerId} не найдено.` });
-      return;
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Предложение с id ${params.offerId} не найдено.`,
+        'OfferController'
+      );
     }
 
     this.noContent(res);
@@ -111,6 +120,15 @@ export class OfferController extends BaseController {
   ): Promise<void> {
     const { offerId } = req.params;
     const { userId, status } = req.body;
+
+    const offerExists = await this.offerService.exists(offerId);
+    if (!offerExists) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Предложение с id ${offerId} не найдено.`,
+        'OfferController'
+      );
+    }
 
     if (status === 1) { //TODO подстроить под фронт в будущем
       await this.userService.addFavorite(userId, offerId);

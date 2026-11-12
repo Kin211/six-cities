@@ -1,7 +1,7 @@
 ﻿import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { BaseController, HttpMethod } from '../../libs/rest/index.js';
+import {BaseController, HttpError, HttpMethod} from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { Component } from '../../types/index.js';
@@ -34,8 +34,11 @@ export class UserController extends BaseController {
     const existsUser = await this.userService.findByEmail(body.email);
 
     if (existsUser) {
-      this.send(res, StatusCodes.CONFLICT, { error: `Пользователь с email «${body.email}» уже существует.` });
-      return;
+      throw new HttpError(
+        StatusCodes.CONFLICT,
+        `Пользователь с email «${body.email}» уже существует.`,
+        'UserController'
+      );
     }
 
     const result = await this.userService.create(body, this.configService.get('SALT'));
@@ -44,20 +47,31 @@ export class UserController extends BaseController {
 
   public async login(
     { body }: LoginUserRequest,
-    res: Response,
+    _res: Response,
   ): Promise<void> {
     const existsUser = await this.userService.findByEmail(body.email);
 
     if (!existsUser) {
-      this.send(res, StatusCodes.UNAUTHORIZED, { error: `Пользователь с email ${body.email} не найден.` });
-      return;
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        `Пользователь с email ${body.email} не найден.`,
+        'UserController'
+      );
     }
 
-    this.send(res, StatusCodes.NOT_IMPLEMENTED, { message: 'Not implemented yet' });
+    throw new HttpError(
+      StatusCodes.NOT_IMPLEMENTED,
+      'Not implemented yet',
+      'UserController'
+    );
   }
 
-  public async checkAuth(_req: Request, res: Response): Promise<void> {
-    this.send(res, StatusCodes.NOT_IMPLEMENTED, { message: 'Not implemented yet' });
+  public async checkAuth(_req: Request, _res: Response): Promise<void> {
+    throw new HttpError(
+      StatusCodes.NOT_IMPLEMENTED,
+      'Not implemented yet',
+      'UserController'
+    );
   }
 
   public async uploadAvatar(
@@ -66,6 +80,15 @@ export class UserController extends BaseController {
   ): Promise<void> {
     const { userId } = req.params;
     const updatedUser = await this.userService.updateById(userId, { avatarPath: req.body.avatarPath });
+
+    if (!updatedUser) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Пользователь с id ${userId} не найден.`,
+        'UserController'
+      );
+    }
+
     this.created(res, fillDTO(UserRdo, updatedUser));
   }
 }

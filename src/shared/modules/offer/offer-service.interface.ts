@@ -11,4 +11,5 @@ export interface OfferServiceInterface {
   deleteById(offerId: string): Promise<OfferDocument | null>;
   findPremiumByCity(city: CityName): Promise<OfferDocument[]>;
   updateRating(offerId: string): Promise<OfferDocument | null>;
+  exists(documentId: string): Promise<boolean>;
 }
